@@ -39,7 +39,7 @@ function displayMovies(data){
   let imageUrl = getBaseImageUrl();
 
   if (data["results"].length == 0) {
-    htmlString = `<div class="alert alert-danger text-center" role="alert">No Data Found!</div>`;
+    htmlString = `<div class="alert alert-danger text-center" role="alert">No data Found!</div>`;
   }
   else{
     data["results"].forEach(function(movie){
@@ -80,10 +80,13 @@ function getBaseImageUrl(){
         let container = $("#movies");
         let htmlString = "";
         container.empty();
-        let imageUrl = getBaseImageUrl();
+        var imageUrl = getBaseImageUrl();
+
         
         htmlString +=
-        `
+        `    
+
+            
             <img src=${data["poster_path"] == null ? "/assets/image.png" : imageUrl + "/" + data["poster_path"]} data-id="${data['id']}" class = "movie_poster"/>
             <h1>${data["title"]}</h2>
             <h3>Vote Average:${data["vote_average"]}</h3>
@@ -93,7 +96,20 @@ function getBaseImageUrl(){
             <b>Original Language: </b> ${data["original_language"]}<br />
             <b>Release Date: </b> ${data["release_date"]}<br />
             <b>Popularity: </b> ${data["popularity"]}<br />
+      
+            <form id="rating-form" action="/reviews" method="POST">
+  <input type="hidden" name="authenticity_token" value=${window._token} />
+  <input type="hidden" name="tmdb_id" value=${data["id"]} />
+  <textarea name= "review[comment]" class="form-control" placeholder="Your review in 140 characters"/>
+  <br />
+  <input type="submit" class="btn btn-success pull-right" />
+</form>
+
+                       
         `;
+
+    
+
         
         
         container.append(htmlString);

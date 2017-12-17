@@ -3,7 +3,8 @@ class ReviewsController < ApplicationController
 
   def create
     @movie = Movie.find_or_initialize_by(tmdb_id: params[:tmdb_id])
-
+    Tmdb::Api.key("3deceb9041e72a8856191ddeaf96a293")
+    Tmdb::Api.language("en")
     if @movie.new_record?
       # fetch movie data from API using params[:tmdb_id]
       @fetched_movie = Tmdb::Movie.detail(params[:tmdb_id])
@@ -15,7 +16,7 @@ class ReviewsController < ApplicationController
       @movie.released = true if (@fetched_movie.release_date[0...4].to_i <= Time.now.year)
       @movie.runtime = @fetched_movie.runtime
       @movie.popularity = @fetched_movie.popularity
-      # @movie.genre = @fetched_movie.genres.collect { |x| x[:name] }
+       @movie.genre = @fetched_movie.genres.collect { |x| x[:name] }
       @fetched_movie.genres.each { |x| @movie.genre += (x.name + " ")}
       @movie.language = @fetched_movie.original_language
       @movie.budget = @fetched_movie.budget
@@ -26,7 +27,7 @@ class ReviewsController < ApplicationController
       @movie.tmdb_id = @fetched_movie.id
       @movie.imdb_id = @fetched_movie.imdb_id
 
-      @movie.save!
+      @movie.save
     end
 
     # create a new review and connect it to the current_user and the movie
